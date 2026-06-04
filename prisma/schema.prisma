@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  email     String   @unique
+  password  String
+  resumes   Resume[]
+  createdAt DateTime @default(now())
+}
+
+model Resume {
+  id            String       @id @default(cuid())
+  filename      String
+  fileUrl       String
+  extractedText String?
+  feedback      Json?
+  score         Int?
+  status        ResumeStatus @default(PENDING)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+}
+
+enum ResumeStatus {
+  PENDING
+  ANALYZING
+  DONE
+  FAILED
+}
