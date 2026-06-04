@@ -35,7 +35,7 @@ function SignOutDialog() {
       <DialogTrigger asChild>
         <Button
           variant="ghost"
-          className="cursor-pointer px-1 w-full justify-start"
+          className="text-sm font-normal cursor-pointer px-1 w-full justify-start"
         >
           Sign Out
         </Button>
