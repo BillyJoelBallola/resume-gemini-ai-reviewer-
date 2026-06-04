@@ -69,21 +69,23 @@ function ResumeList({ resumes }: { resumes: Resume[] }) {
           <Card key={resume.id}>
             <CardContent className="flex items-center justify-between py-4">
               <div
-                className="flex-1 cursor-pointer flex items-center gap-3"
+                className="flex-1 min-w-0 cursor-pointer flex items-center gap-3"
                 onClick={() =>
                   resume.status === "DONE" &&
                   router.push(`/resumes/${resume.id}`)
                 }
               >
                 <FileText className="size-8 text-amber-500 shrink-0" />
-                <div>
-                  <p className="font-semibold truncate">{resume.filename}</p>
+                <div className="min-w-0">
+                  <p className="font-semibold max-w-xs truncate">
+                    {resume.filename}
+                  </p>
                   <p className="text-xs text-muted-foreground">
                     {format(new Date(resume.createdAt), "MMM dd, yyyy")}
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-2 md:gap-4">
+              <div className="flex items-center gap-1 md:gap-4">
                 {resume.score !== null && (
                   <p
                     className={`text-xl md:text-2xl font-bold font-mono ${scoreColor(resume.score)}`}

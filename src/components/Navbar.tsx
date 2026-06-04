@@ -15,7 +15,7 @@ function Navbar({
         <div className="flex items-center space-x-2 md:space-x-4">
           <Link
             href="/"
-            className="text-xl font-semibold flex items-center gap-2"
+            className="text-xl font-semibold flex items-center gap-1 md:gap-2"
           >
             <img src="/logo-icon.png" alt="Logo" className="size-6" />
             <p>
