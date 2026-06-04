@@ -77,7 +77,7 @@ function ResumeList({ resumes }: { resumes: Resume[] }) {
               >
                 <FileText className="size-8 text-amber-500 shrink-0" />
                 <div>
-                  <p className="font-semibold">{resume.filename}</p>
+                  <p className="font-semibold truncate">{resume.filename}</p>
                   <p className="text-xs text-muted-foreground">
                     {format(new Date(resume.createdAt), "MMM dd, yyyy")}
                   </p>
