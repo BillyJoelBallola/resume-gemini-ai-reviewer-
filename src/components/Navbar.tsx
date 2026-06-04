@@ -13,10 +13,7 @@ function Navbar({
     <div className="sticky top-0 z-10 border-b bg-neutral-50 dark:bg-neutral-900 py-4">
       <div className="side-margin flex items-center justify-between">
         <div className="flex items-center space-x-2 md:space-x-4">
-          <Link
-            href="/"
-            className="text-xl font-semibold flex items-center gap-1 md:gap-2"
-          >
+          <Link href="/" className="text-xl font-semibold flex items-center">
             <img src="/logo-icon.png" alt="Logo" className="size-6" />
             <p>
               <span>resum</span>
