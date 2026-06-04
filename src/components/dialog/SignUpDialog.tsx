@@ -14,10 +14,8 @@ import {
 } from "@/components/ui/dialog";
 import InputWithLabel from "@/components/InputWithLabel";
 import { Loader } from "lucide-react";
-import { useRouter } from "next/navigation";
 
 function SignUpDialog() {
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     username: "",
@@ -37,12 +35,10 @@ function SignUpDialog() {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const response = await signUp(formData);
-      if (response.error) return toast.error(response.error);
-      if (response.success) {
-        toast.success("Account created! Please sign in.");
-        router.push("/");
-      }
+      const signUpRes = await signUp(formData);
+
+      if (signUpRes.error) return toast.error(signUpRes.error);
+      if (signUpRes.success) toast.success("Account created! Please sign in.");
     } catch {
       toast.error("An error occurred while signing up.");
     } finally {

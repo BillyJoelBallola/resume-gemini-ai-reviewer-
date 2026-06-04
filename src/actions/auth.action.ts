@@ -34,10 +34,6 @@ export async function signUp({
       data: { username, email, password: hashedPassword },
     });
 
-    if (user) {
-      signIn({ username, password });
-    }
-
     return { success: true, user };
   } catch (error) {
     console.error(error);
