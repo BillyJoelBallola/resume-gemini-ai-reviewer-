@@ -3,6 +3,7 @@
 import prisma from "@/lib/prisma";
 import { currentUser } from "@/actions/user.action";
 import { geminiModel } from "@/lib/gemini";
+import { analysisRatelimit } from "@/lib/ratelimit";
 
 export async function uploadResume({
   filename,
@@ -13,6 +14,22 @@ export async function uploadResume({
 }) {
   const user = await currentUser();
   if (!user) return { error: "Unauthorized." };
+
+  // server-side file validation
+  if (!filename.toLowerCase().endsWith(".pdf")) {
+    return { error: "Only PDF files are allowed." };
+  }
+
+  // check base64 size (4MB limit)
+  const sizeInBytes = (fileUrl.length * 3) / 4;
+  if (sizeInBytes > 4 * 1024 * 1024) {
+    return { error: "File size must be less than 4MB." };
+  }
+
+  // check base64 is valid PDF (starts with JVBERi0 in base64)
+  if (!fileUrl.startsWith("JVBERi0")) {
+    return { error: "Invalid PDF file." };
+  }
 
   try {
     const resume = await prisma.resume.create({
@@ -34,6 +51,10 @@ export async function uploadResume({
 export async function analyzeResume(resumeId: string) {
   const user = await currentUser();
   if (!user) return { error: "Unauthorized." };
+
+  const { success } = await analysisRatelimit.limit(user.id);
+  if (!success)
+    return { error: "Analysis limit reached. Try again in an hour." };
 
   try {
     const resume = await prisma.resume.findFirst({
@@ -76,7 +97,47 @@ export async function analyzeResume(resumeId: string) {
 
     const text = result.response.text();
     const clean = text.replace(/```json|```/g, "").trim();
-    const feedback = JSON.parse(clean);
+
+    let feedback;
+    try {
+      feedback = JSON.parse(clean);
+    } catch {
+      throw new Error("AI returned invalid JSON.");
+    }
+
+    // 👇 sanitize — validate required fields
+    if (
+      typeof feedback.overallScore !== "number" ||
+      feedback.overallScore < 0 ||
+      feedback.overallScore > 100
+    ) {
+      throw new Error("AI returned invalid score.");
+    }
+
+    if (typeof feedback.overallFeedback !== "string") {
+      throw new Error("AI returned invalid feedback.");
+    }
+
+    if (typeof feedback.sections !== "object" || !feedback.sections) {
+      throw new Error("AI returned invalid sections.");
+    }
+
+    // 👇 ensure arrays exist and are actually arrays
+    feedback.strengths = Array.isArray(feedback.strengths)
+      ? feedback.strengths
+      : [];
+    feedback.weaknesses = Array.isArray(feedback.weaknesses)
+      ? feedback.weaknesses
+      : [];
+    feedback.missingKeywords = Array.isArray(feedback.missingKeywords)
+      ? feedback.missingKeywords
+      : [];
+
+    // 👇 clamp score between 0-100 just in case
+    feedback.overallScore = Math.min(
+      100,
+      Math.max(0, Math.round(feedback.overallScore)),
+    );
 
     await prisma.resume.update({
       where: { id: resumeId },

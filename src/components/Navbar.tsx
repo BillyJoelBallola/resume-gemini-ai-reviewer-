@@ -20,14 +20,6 @@ function Navbar({
               <span className="text-amber-500">IQ</span>
             </p>
           </Link>
-          {user && (
-            <Link
-              href="/resumes"
-              className="text-sm text-muted-foreground hover:text-amber-500"
-            >
-              Resumes
-            </Link>
-          )}
         </div>
         <div className="flex items-center space-x-2">
           <ModeToggle />

@@ -4,7 +4,9 @@ import { getJwtSecretKey, TOKEN_NAME } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcrypt";
 import { SignJWT } from "jose";
-import { cookies } from "next/headers";
+import { authRatelimit } from "@/lib/ratelimit";
+import { headers, cookies } from "next/headers";
+import { signUpSchema } from "@/lib/validations";
 
 export async function signUp({
   username,
@@ -18,6 +20,21 @@ export async function signUp({
   confirmPassword: string;
 }) {
   try {
+    const parsed = signUpSchema.safeParse({
+      username,
+      email,
+      password,
+      confirmPassword,
+    });
+    if (!parsed.success) {
+      return { error: parsed.error.message };
+    }
+
+    const ip = (await headers()).get("x-forwarded-for") ?? "anonymous";
+    const { success } = await authRatelimit.limit(ip);
+    if (!success)
+      return { error: "Too many attempts. Please try again later." };
+
     const existingUser = await prisma.user.findFirst({
       where: { OR: [{ username }, { email }] },
     });
@@ -49,6 +66,19 @@ export async function signIn({
   password: string;
 }) {
   try {
+    const parsed = signUpSchema.safeParse({
+      username,
+      password,
+    });
+    if (!parsed.success) {
+      return { error: parsed.error.message };
+    }
+
+    const ip = (await headers()).get("x-forwarded-for") ?? "anonymous";
+    const { success } = await authRatelimit.limit(ip);
+    if (!success)
+      return { error: "Too many attempts. Please try again later." };
+
     const user = await prisma.user.findUnique({
       where: { username },
       select: { id: true, username: true, password: true },

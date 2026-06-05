@@ -1,6 +1,6 @@
 import { getResumes } from "@/actions/resume.action";
 import { currentUser } from "@/actions/user.action";
-import ResumeList from "@/components/ResumeList";
+import ResumeList from "@/components/resume/ResumeList";
 import UploadResumeCard from "@/components/resume/UploadResumeCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 

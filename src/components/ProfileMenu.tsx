@@ -26,6 +26,12 @@ export function ProfileMenu({ username }: { username?: string }) {
             <span className="text-amber-500 font-semibold">{username}</span>
           </p>
           <DropdownMenuItem asChild>
+            <Link href="/dashboard">Dashboard</Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href="/resumes">Resumes</Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
             <Link href="/settings">Settings</Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>

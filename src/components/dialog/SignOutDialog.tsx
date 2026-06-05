@@ -15,15 +15,17 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 function SignOutDialog() {
+  const router = useRouter();
   const [isSigningOut, setIsSigningOut] = useState(false);
 
   const handleSignOut = async () => {
     setIsSigningOut(true);
     try {
       await signOut();
-      return (window.location.href = "/");
+      return router.push("/");
     } catch (error) {
       toast.error("Error occured while signing out");
     } finally {
