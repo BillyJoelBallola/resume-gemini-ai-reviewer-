@@ -3,7 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Upload, FileText, Loader, Lock, LogIn } from "lucide-react";
+import {
+  Upload,
+  FileText,
+  Loader,
+  Lock,
+  LogIn,
+  LoaderCircle,
+} from "lucide-react";
 import { uploadResume, analyzeResume } from "@/actions/resume.action";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -136,7 +143,11 @@ function UploadResumeCard({ isAuthenticated }: { isAuthenticated: boolean }) {
         <CardContent className="flex flex-col items-center justify-center py-12 gap-4">
           {file ? (
             <>
-              <FileText className="size-12 text-amber-500" />
+              {isLoading ? (
+                <LoaderCircle className="size-12 text-amber-500 animate-spin" />
+              ) : (
+                <FileText className="size-12 text-amber-500" />
+              )}
               <p className="font-semibold">{file.name}</p>
               <p className="text-sm text-muted-foreground">
                 {(file.size / 1024 / 1024).toFixed(2)} MB
