@@ -60,8 +60,18 @@ export default async function ResumePage({
         </div>
       </div>
 
-      {/* resume preview */}
-      <iframe src={pdfSrc} className="w-full h-[45vh] md:h-[75vh] rounded-xl" />
+      {/* Resume preview */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Preview Resume</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <iframe
+            src={pdfSrc}
+            className="w-full h-[45vh] md:h-[75vh] rounded-xl"
+          />
+        </CardContent>
+      </Card>
 
       {/* Score + Overall Feedback */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
