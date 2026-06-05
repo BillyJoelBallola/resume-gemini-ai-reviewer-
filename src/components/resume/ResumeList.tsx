@@ -50,7 +50,10 @@ function ResumeList({ resumes }: { resumes: Resume[] }) {
     <>
       <div className="space-y-3">
         {resumes.map((resume) => (
-          <ResumeItem resume={{ ...resume, setConfirmId: setConfirmId }} />
+          <ResumeItem
+            key={resume.id}
+            resume={{ ...resume, setConfirmId: setConfirmId }}
+          />
         ))}
       </div>
 

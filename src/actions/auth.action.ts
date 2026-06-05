@@ -6,7 +6,7 @@ import bcrypt from "bcrypt";
 import { SignJWT } from "jose";
 import { authRatelimit } from "@/lib/ratelimit";
 import { headers, cookies } from "next/headers";
-import { signUpSchema } from "@/lib/validations";
+import { signInSchema, signUpSchema } from "@/lib/validations";
 
 export async function signUp({
   username,
@@ -27,7 +27,7 @@ export async function signUp({
       confirmPassword,
     });
     if (!parsed.success) {
-      return { error: parsed.error.message };
+      return { error: parsed.error.issues[0].message };
     }
 
     const ip = (await headers()).get("x-forwarded-for") ?? "anonymous";
@@ -66,16 +66,18 @@ export async function signIn({
   password: string;
 }) {
   try {
-    const parsed = signUpSchema.safeParse({
+    const parsed = signInSchema.safeParse({
       username,
       password,
     });
+
     if (!parsed.success) {
-      return { error: parsed.error.message };
+      return { error: parsed.error.issues[0].message };
     }
 
     const ip = (await headers()).get("x-forwarded-for") ?? "anonymous";
     const { success } = await authRatelimit.limit(ip);
+
     if (!success)
       return { error: "Too many attempts. Please try again later." };
 

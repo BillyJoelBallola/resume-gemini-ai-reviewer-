@@ -61,7 +61,9 @@ export default async function ResumePage({
       {/* Score + Overall Feedback */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Score */}
-        <Card className={`border-2 ${scoreBg(resume.score ?? 0)}`}>
+        <Card
+          className={`border-2 grid place-items-center ${scoreBg(resume.score ?? 0)}`}
+        >
           <CardContent className="flex flex-col items-center justify-center py-8 gap-2">
             <p className="text-sm text-muted-foreground font-medium">
               Overall Score

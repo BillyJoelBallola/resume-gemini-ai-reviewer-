@@ -6,6 +6,7 @@ import { jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import bcrypt from "bcrypt";
 import { signOut } from "./auth.action";
+import { profileSchema } from "@/lib/validations";
 
 export async function currentUser() {
   try {
@@ -35,6 +36,15 @@ export async function updateProfile({
   if (!user) return { error: "Unauthorized." };
 
   try {
+    const parsed = profileSchema.safeParse({
+      username,
+      email,
+    });
+
+    if (!parsed.success) {
+      return { error: parsed.error.issues[0].message };
+    }
+
     await prisma.user.update({
       where: { id: user.id },
       data: { username, email },
@@ -59,6 +69,16 @@ export async function updatePassword({
   if (!user) return { error: "Unauthorized." };
 
   try {
+    const parsed = profileSchema.safeParse({
+      currentPassword,
+      newPassword,
+      confirmPassword,
+    });
+
+    if (!parsed.success) {
+      return { error: parsed.error.issues[0].message };
+    }
+
     const dbUser = await prisma.user.findUnique({
       where: { id: user.id },
       select: { password: true },
