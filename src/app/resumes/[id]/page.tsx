@@ -47,6 +47,8 @@ export default async function ResumePage({
 
   const feedback = resume.feedback as any;
 
+  const pdfSrc = `data:application/pdf;base64,${resume.fileUrl}`;
+
   return (
     <div className="max-w-4xl mx-auto space-y-8">
       {/* Header */}
@@ -57,6 +59,9 @@ export default async function ResumePage({
           <p className="text-sm text-muted-foreground">{resume.filename}</p>
         </div>
       </div>
+
+      {/* resume preview */}
+      <iframe src={pdfSrc} className="w-full h-[45vh] md:h-[75vh] rounded-xl" />
 
       {/* Score + Overall Feedback */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
