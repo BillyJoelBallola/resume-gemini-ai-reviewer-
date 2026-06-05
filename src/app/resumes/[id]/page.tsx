@@ -4,7 +4,6 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle2, XCircle, Lightbulb, Tag } from "lucide-react";
 import BackButton from "@/components/BackButton";
-import PdfViewer from "@/components/PdfViewer";
 
 export const dynamic = "force-dynamic";
 
@@ -61,10 +60,8 @@ export default async function ResumePage({
         </div>
       </div>
 
-      {/* Resume preview */}
-      <div className="w-full overflow-auto p-2">
-        <PdfViewer base64={resume.fileUrl} />
-      </div>
+      {/* resume preview */}
+      <iframe src={pdfSrc} className="w-full h-[45vh] md:h-[75vh] rounded-xl" />
 
       {/* Score + Overall Feedback */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
