@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle2, XCircle, Lightbulb, Tag } from "lucide-react";
 import BackButton from "@/components/BackButton";
+import JobMatchSection from "@/components/JobMatchSection";
 
 export const dynamic = "force-dynamic";
 
@@ -46,7 +47,7 @@ export default async function ResumePage({
   if (!resume) notFound();
 
   const feedback = resume.feedback as any;
-
+  const existingJobMatch = resume.jobMatch as any;
   const pdfSrc = `data:application/pdf;base64,${resume.fileUrl}`;
 
   return (
@@ -233,6 +234,16 @@ export default async function ResumePage({
           </CardContent>
         </Card>
       )}
+
+      {/* Job Match Section */}
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold">Job Description Match</h2>
+        <JobMatchSection
+          resumeId={resume.id}
+          existingJobMatch={existingJobMatch}
+          existingJobDescription={resume.jobDescription}
+        />
+      </div>
     </div>
   );
 }

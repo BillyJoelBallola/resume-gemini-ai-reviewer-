@@ -159,6 +159,119 @@ export async function analyzeResume(resumeId: string) {
   }
 }
 
+export async function analyzeJobMatch({
+  resumeId,
+  jobDescription,
+}: {
+  resumeId: string;
+  jobDescription: string;
+}) {
+  const user = await currentUser();
+  if (!user) return { error: "Unauthorized." };
+
+  // rate limit
+  const { success } = await analysisRatelimit.limit(user.id);
+  if (!success)
+    return { error: "Analysis limit reached. Try again in an hour." };
+
+  try {
+    const resume = await prisma.resume.findFirst({
+      where: { id: resumeId, userId: user.id },
+    });
+
+    if (!resume) return { error: "Resume not found." };
+    if (resume.status !== "DONE")
+      return { error: "Resume has not been analyzed yet." };
+
+    // send resume + job description to Gemini
+    const result = await geminiModel.generateContent([
+      {
+        inlineData: {
+          mimeType: "application/pdf",
+          data: resume.fileUrl,
+        },
+      },
+      {
+        text: `
+          You are an expert ATS and hiring manager. Compare this resume against the following job description and return ONLY a valid JSON object with no markdown, no backticks, no explanation.
+
+            Job Description:
+            ${jobDescription}
+
+            Use exactly this structure:
+            {
+              "matchScore": <number 0-100>,
+              "summary": "<string — 2-3 sentence overall assessment>",
+              "matchedKeywords": ["<string>"],
+              "missingKeywords": ["<string>"],
+              "matchedSkills": ["<string>"],
+              "missingSkills": ["<string>"],
+              "strengths": ["<string — what makes this resume good for this role>"],
+              "gaps": ["<string — what's missing or weak for this role>"],
+              "suggestions": ["<string — specific actionable improvements>"],
+              "verdict": "STRONG_MATCH" | "GOOD_MATCH" | "PARTIAL_MATCH" | "WEAK_MATCH"
+            }`,
+      },
+    ]);
+
+    const text = result.response.text();
+    const clean = text.replace(/```json|```/g, "").trim();
+
+    let jobMatch;
+    try {
+      jobMatch = JSON.parse(clean);
+    } catch {
+      throw new Error("AI returned invalid JSON.");
+    }
+
+    // sanitize
+    if (
+      typeof jobMatch.matchScore !== "number" ||
+      jobMatch.matchScore < 0 ||
+      jobMatch.matchScore > 100
+    ) {
+      throw new Error("AI returned invalid match score.");
+    }
+
+    jobMatch.matchScore = Math.min(
+      100,
+      Math.max(0, Math.round(jobMatch.matchScore)),
+    );
+    jobMatch.matchedKeywords = Array.isArray(jobMatch.matchedKeywords)
+      ? jobMatch.matchedKeywords
+      : [];
+    jobMatch.missingKeywords = Array.isArray(jobMatch.missingKeywords)
+      ? jobMatch.missingKeywords
+      : [];
+    jobMatch.matchedSkills = Array.isArray(jobMatch.matchedSkills)
+      ? jobMatch.matchedSkills
+      : [];
+    jobMatch.missingSkills = Array.isArray(jobMatch.missingSkills)
+      ? jobMatch.missingSkills
+      : [];
+    jobMatch.strengths = Array.isArray(jobMatch.strengths)
+      ? jobMatch.strengths
+      : [];
+    jobMatch.gaps = Array.isArray(jobMatch.gaps) ? jobMatch.gaps : [];
+    jobMatch.suggestions = Array.isArray(jobMatch.suggestions)
+      ? jobMatch.suggestions
+      : [];
+
+    await prisma.resume.update({
+      where: { id: resumeId },
+      data: {
+        jobMatch,
+        jobDescription,
+      },
+    });
+
+    return { success: true, jobMatch };
+  } catch (error) {
+    console.error(error);
+    return { error: "An error occurred while analyzing job match." };
+  }
+}
+
 export async function getResumes() {
   const user = await currentUser();
   if (!user) return null;

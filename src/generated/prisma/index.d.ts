@@ -2106,6 +2106,7 @@ export namespace Prisma {
     filename: string | null
     fileUrl: string | null
     extractedText: string | null
+    jobDescription: string | null
     score: number | null
     status: $Enums.ResumeStatus | null
     userId: string | null
@@ -2117,6 +2118,7 @@ export namespace Prisma {
     filename: string | null
     fileUrl: string | null
     extractedText: string | null
+    jobDescription: string | null
     score: number | null
     status: $Enums.ResumeStatus | null
     userId: string | null
@@ -2128,6 +2130,8 @@ export namespace Prisma {
     filename: number
     fileUrl: number
     extractedText: number
+    jobMatch: number
+    jobDescription: number
     feedback: number
     score: number
     status: number
@@ -2150,6 +2154,7 @@ export namespace Prisma {
     filename?: true
     fileUrl?: true
     extractedText?: true
+    jobDescription?: true
     score?: true
     status?: true
     userId?: true
@@ -2161,6 +2166,7 @@ export namespace Prisma {
     filename?: true
     fileUrl?: true
     extractedText?: true
+    jobDescription?: true
     score?: true
     status?: true
     userId?: true
@@ -2172,6 +2178,8 @@ export namespace Prisma {
     filename?: true
     fileUrl?: true
     extractedText?: true
+    jobMatch?: true
+    jobDescription?: true
     feedback?: true
     score?: true
     status?: true
@@ -2271,6 +2279,8 @@ export namespace Prisma {
     filename: string
     fileUrl: string
     extractedText: string | null
+    jobMatch: JsonValue | null
+    jobDescription: string | null
     feedback: JsonValue | null
     score: number | null
     status: $Enums.ResumeStatus
@@ -2302,6 +2312,8 @@ export namespace Prisma {
     filename?: boolean
     fileUrl?: boolean
     extractedText?: boolean
+    jobMatch?: boolean
+    jobDescription?: boolean
     feedback?: boolean
     score?: boolean
     status?: boolean
@@ -2315,6 +2327,8 @@ export namespace Prisma {
     filename?: boolean
     fileUrl?: boolean
     extractedText?: boolean
+    jobMatch?: boolean
+    jobDescription?: boolean
     feedback?: boolean
     score?: boolean
     status?: boolean
@@ -2328,6 +2342,8 @@ export namespace Prisma {
     filename?: boolean
     fileUrl?: boolean
     extractedText?: boolean
+    jobMatch?: boolean
+    jobDescription?: boolean
     feedback?: boolean
     score?: boolean
     status?: boolean
@@ -2341,6 +2357,8 @@ export namespace Prisma {
     filename?: boolean
     fileUrl?: boolean
     extractedText?: boolean
+    jobMatch?: boolean
+    jobDescription?: boolean
     feedback?: boolean
     score?: boolean
     status?: boolean
@@ -2348,7 +2366,7 @@ export namespace Prisma {
     createdAt?: boolean
   }
 
-  export type ResumeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "filename" | "fileUrl" | "extractedText" | "feedback" | "score" | "status" | "userId" | "createdAt", ExtArgs["result"]["resume"]>
+  export type ResumeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "filename" | "fileUrl" | "extractedText" | "jobMatch" | "jobDescription" | "feedback" | "score" | "status" | "userId" | "createdAt", ExtArgs["result"]["resume"]>
   export type ResumeInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -2369,6 +2387,8 @@ export namespace Prisma {
       filename: string
       fileUrl: string
       extractedText: string | null
+      jobMatch: Prisma.JsonValue | null
+      jobDescription: string | null
       feedback: Prisma.JsonValue | null
       score: number | null
       status: $Enums.ResumeStatus
@@ -2802,6 +2822,8 @@ export namespace Prisma {
     readonly filename: FieldRef<"Resume", 'String'>
     readonly fileUrl: FieldRef<"Resume", 'String'>
     readonly extractedText: FieldRef<"Resume", 'String'>
+    readonly jobMatch: FieldRef<"Resume", 'Json'>
+    readonly jobDescription: FieldRef<"Resume", 'String'>
     readonly feedback: FieldRef<"Resume", 'Json'>
     readonly score: FieldRef<"Resume", 'Int'>
     readonly status: FieldRef<"Resume", 'ResumeStatus'>
@@ -3256,6 +3278,8 @@ export namespace Prisma {
     filename: 'filename',
     fileUrl: 'fileUrl',
     extractedText: 'extractedText',
+    jobMatch: 'jobMatch',
+    jobDescription: 'jobDescription',
     feedback: 'feedback',
     score: 'score',
     status: 'status',
@@ -3462,6 +3486,8 @@ export namespace Prisma {
     filename?: StringFilter<"Resume"> | string
     fileUrl?: StringFilter<"Resume"> | string
     extractedText?: StringNullableFilter<"Resume"> | string | null
+    jobMatch?: JsonNullableFilter<"Resume">
+    jobDescription?: StringNullableFilter<"Resume"> | string | null
     feedback?: JsonNullableFilter<"Resume">
     score?: IntNullableFilter<"Resume"> | number | null
     status?: EnumResumeStatusFilter<"Resume"> | $Enums.ResumeStatus
@@ -3475,6 +3501,8 @@ export namespace Prisma {
     filename?: SortOrder
     fileUrl?: SortOrder
     extractedText?: SortOrderInput | SortOrder
+    jobMatch?: SortOrderInput | SortOrder
+    jobDescription?: SortOrderInput | SortOrder
     feedback?: SortOrderInput | SortOrder
     score?: SortOrderInput | SortOrder
     status?: SortOrder
@@ -3491,6 +3519,8 @@ export namespace Prisma {
     filename?: StringFilter<"Resume"> | string
     fileUrl?: StringFilter<"Resume"> | string
     extractedText?: StringNullableFilter<"Resume"> | string | null
+    jobMatch?: JsonNullableFilter<"Resume">
+    jobDescription?: StringNullableFilter<"Resume"> | string | null
     feedback?: JsonNullableFilter<"Resume">
     score?: IntNullableFilter<"Resume"> | number | null
     status?: EnumResumeStatusFilter<"Resume"> | $Enums.ResumeStatus
@@ -3504,6 +3534,8 @@ export namespace Prisma {
     filename?: SortOrder
     fileUrl?: SortOrder
     extractedText?: SortOrderInput | SortOrder
+    jobMatch?: SortOrderInput | SortOrder
+    jobDescription?: SortOrderInput | SortOrder
     feedback?: SortOrderInput | SortOrder
     score?: SortOrderInput | SortOrder
     status?: SortOrder
@@ -3524,6 +3556,8 @@ export namespace Prisma {
     filename?: StringWithAggregatesFilter<"Resume"> | string
     fileUrl?: StringWithAggregatesFilter<"Resume"> | string
     extractedText?: StringNullableWithAggregatesFilter<"Resume"> | string | null
+    jobMatch?: JsonNullableWithAggregatesFilter<"Resume">
+    jobDescription?: StringNullableWithAggregatesFilter<"Resume"> | string | null
     feedback?: JsonNullableWithAggregatesFilter<"Resume">
     score?: IntNullableWithAggregatesFilter<"Resume"> | number | null
     status?: EnumResumeStatusWithAggregatesFilter<"Resume"> | $Enums.ResumeStatus
@@ -3596,6 +3630,8 @@ export namespace Prisma {
     filename: string
     fileUrl: string
     extractedText?: string | null
+    jobMatch?: NullableJsonNullValueInput | InputJsonValue
+    jobDescription?: string | null
     feedback?: NullableJsonNullValueInput | InputJsonValue
     score?: number | null
     status?: $Enums.ResumeStatus
@@ -3608,6 +3644,8 @@ export namespace Prisma {
     filename: string
     fileUrl: string
     extractedText?: string | null
+    jobMatch?: NullableJsonNullValueInput | InputJsonValue
+    jobDescription?: string | null
     feedback?: NullableJsonNullValueInput | InputJsonValue
     score?: number | null
     status?: $Enums.ResumeStatus
@@ -3620,6 +3658,8 @@ export namespace Prisma {
     filename?: StringFieldUpdateOperationsInput | string
     fileUrl?: StringFieldUpdateOperationsInput | string
     extractedText?: NullableStringFieldUpdateOperationsInput | string | null
+    jobMatch?: NullableJsonNullValueInput | InputJsonValue
+    jobDescription?: NullableStringFieldUpdateOperationsInput | string | null
     feedback?: NullableJsonNullValueInput | InputJsonValue
     score?: NullableIntFieldUpdateOperationsInput | number | null
     status?: EnumResumeStatusFieldUpdateOperationsInput | $Enums.ResumeStatus
@@ -3632,6 +3672,8 @@ export namespace Prisma {
     filename?: StringFieldUpdateOperationsInput | string
     fileUrl?: StringFieldUpdateOperationsInput | string
     extractedText?: NullableStringFieldUpdateOperationsInput | string | null
+    jobMatch?: NullableJsonNullValueInput | InputJsonValue
+    jobDescription?: NullableStringFieldUpdateOperationsInput | string | null
     feedback?: NullableJsonNullValueInput | InputJsonValue
     score?: NullableIntFieldUpdateOperationsInput | number | null
     status?: EnumResumeStatusFieldUpdateOperationsInput | $Enums.ResumeStatus
@@ -3644,6 +3686,8 @@ export namespace Prisma {
     filename: string
     fileUrl: string
     extractedText?: string | null
+    jobMatch?: NullableJsonNullValueInput | InputJsonValue
+    jobDescription?: string | null
     feedback?: NullableJsonNullValueInput | InputJsonValue
     score?: number | null
     status?: $Enums.ResumeStatus
@@ -3656,6 +3700,8 @@ export namespace Prisma {
     filename?: StringFieldUpdateOperationsInput | string
     fileUrl?: StringFieldUpdateOperationsInput | string
     extractedText?: NullableStringFieldUpdateOperationsInput | string | null
+    jobMatch?: NullableJsonNullValueInput | InputJsonValue
+    jobDescription?: NullableStringFieldUpdateOperationsInput | string | null
     feedback?: NullableJsonNullValueInput | InputJsonValue
     score?: NullableIntFieldUpdateOperationsInput | number | null
     status?: EnumResumeStatusFieldUpdateOperationsInput | $Enums.ResumeStatus
@@ -3667,6 +3713,8 @@ export namespace Prisma {
     filename?: StringFieldUpdateOperationsInput | string
     fileUrl?: StringFieldUpdateOperationsInput | string
     extractedText?: NullableStringFieldUpdateOperationsInput | string | null
+    jobMatch?: NullableJsonNullValueInput | InputJsonValue
+    jobDescription?: NullableStringFieldUpdateOperationsInput | string | null
     feedback?: NullableJsonNullValueInput | InputJsonValue
     score?: NullableIntFieldUpdateOperationsInput | number | null
     status?: EnumResumeStatusFieldUpdateOperationsInput | $Enums.ResumeStatus
@@ -3837,6 +3885,8 @@ export namespace Prisma {
     filename?: SortOrder
     fileUrl?: SortOrder
     extractedText?: SortOrder
+    jobMatch?: SortOrder
+    jobDescription?: SortOrder
     feedback?: SortOrder
     score?: SortOrder
     status?: SortOrder
@@ -3853,6 +3903,7 @@ export namespace Prisma {
     filename?: SortOrder
     fileUrl?: SortOrder
     extractedText?: SortOrder
+    jobDescription?: SortOrder
     score?: SortOrder
     status?: SortOrder
     userId?: SortOrder
@@ -3864,6 +3915,7 @@ export namespace Prisma {
     filename?: SortOrder
     fileUrl?: SortOrder
     extractedText?: SortOrder
+    jobDescription?: SortOrder
     score?: SortOrder
     status?: SortOrder
     userId?: SortOrder
@@ -4205,6 +4257,8 @@ export namespace Prisma {
     filename: string
     fileUrl: string
     extractedText?: string | null
+    jobMatch?: NullableJsonNullValueInput | InputJsonValue
+    jobDescription?: string | null
     feedback?: NullableJsonNullValueInput | InputJsonValue
     score?: number | null
     status?: $Enums.ResumeStatus
@@ -4216,6 +4270,8 @@ export namespace Prisma {
     filename: string
     fileUrl: string
     extractedText?: string | null
+    jobMatch?: NullableJsonNullValueInput | InputJsonValue
+    jobDescription?: string | null
     feedback?: NullableJsonNullValueInput | InputJsonValue
     score?: number | null
     status?: $Enums.ResumeStatus
@@ -4256,6 +4312,8 @@ export namespace Prisma {
     filename?: StringFilter<"Resume"> | string
     fileUrl?: StringFilter<"Resume"> | string
     extractedText?: StringNullableFilter<"Resume"> | string | null
+    jobMatch?: JsonNullableFilter<"Resume">
+    jobDescription?: StringNullableFilter<"Resume"> | string | null
     feedback?: JsonNullableFilter<"Resume">
     score?: IntNullableFilter<"Resume"> | number | null
     status?: EnumResumeStatusFilter<"Resume"> | $Enums.ResumeStatus
@@ -4316,6 +4374,8 @@ export namespace Prisma {
     filename: string
     fileUrl: string
     extractedText?: string | null
+    jobMatch?: NullableJsonNullValueInput | InputJsonValue
+    jobDescription?: string | null
     feedback?: NullableJsonNullValueInput | InputJsonValue
     score?: number | null
     status?: $Enums.ResumeStatus
@@ -4327,6 +4387,8 @@ export namespace Prisma {
     filename?: StringFieldUpdateOperationsInput | string
     fileUrl?: StringFieldUpdateOperationsInput | string
     extractedText?: NullableStringFieldUpdateOperationsInput | string | null
+    jobMatch?: NullableJsonNullValueInput | InputJsonValue
+    jobDescription?: NullableStringFieldUpdateOperationsInput | string | null
     feedback?: NullableJsonNullValueInput | InputJsonValue
     score?: NullableIntFieldUpdateOperationsInput | number | null
     status?: EnumResumeStatusFieldUpdateOperationsInput | $Enums.ResumeStatus
@@ -4338,6 +4400,8 @@ export namespace Prisma {
     filename?: StringFieldUpdateOperationsInput | string
     fileUrl?: StringFieldUpdateOperationsInput | string
     extractedText?: NullableStringFieldUpdateOperationsInput | string | null
+    jobMatch?: NullableJsonNullValueInput | InputJsonValue
+    jobDescription?: NullableStringFieldUpdateOperationsInput | string | null
     feedback?: NullableJsonNullValueInput | InputJsonValue
     score?: NullableIntFieldUpdateOperationsInput | number | null
     status?: EnumResumeStatusFieldUpdateOperationsInput | $Enums.ResumeStatus
@@ -4349,6 +4413,8 @@ export namespace Prisma {
     filename?: StringFieldUpdateOperationsInput | string
     fileUrl?: StringFieldUpdateOperationsInput | string
     extractedText?: NullableStringFieldUpdateOperationsInput | string | null
+    jobMatch?: NullableJsonNullValueInput | InputJsonValue
+    jobDescription?: NullableStringFieldUpdateOperationsInput | string | null
     feedback?: NullableJsonNullValueInput | InputJsonValue
     score?: NullableIntFieldUpdateOperationsInput | number | null
     status?: EnumResumeStatusFieldUpdateOperationsInput | $Enums.ResumeStatus

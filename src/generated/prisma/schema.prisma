@@ -17,13 +17,15 @@ model User {
 }
 
 model Resume {
-  id            String       @id @default(cuid())
-  filename      String
-  fileUrl       String
-  extractedText String?
-  feedback      Json?
-  score         Int?
-  status        ResumeStatus @default(PENDING)
+  id             String       @id @default(cuid())
+  filename       String
+  fileUrl        String
+  extractedText  String?
+  jobMatch       Json?
+  jobDescription String?
+  feedback       Json?
+  score          Int?
+  status         ResumeStatus @default(PENDING)
 
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)

@@ -133,6 +133,8 @@ exports.Prisma.ResumeScalarFieldEnum = {
   filename: 'filename',
   fileUrl: 'fileUrl',
   extractedText: 'extractedText',
+  jobMatch: 'jobMatch',
+  jobDescription: 'jobDescription',
   feedback: 'feedback',
   score: 'score',
   status: 'status',
