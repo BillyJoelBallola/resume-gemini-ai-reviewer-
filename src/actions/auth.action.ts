@@ -7,18 +7,24 @@ import { SignJWT } from "jose";
 import { authRatelimit } from "@/lib/ratelimit";
 import { headers, cookies } from "next/headers";
 import { signInSchema, signUpSchema } from "@/lib/validations";
+import { verifyTurnstile } from "@/lib/turnstile";
 
 export async function signUp({
   username,
   email,
   password,
   confirmPassword,
+  turnstileToken,
 }: {
   username: string;
   email: string;
   password: string;
   confirmPassword: string;
+  turnstileToken: string;
 }) {
+  const isHuman = await verifyTurnstile(turnstileToken);
+  if (!isHuman) return { error: "Captcha verification failed." };
+
   try {
     const parsed = signUpSchema.safeParse({
       username,
@@ -61,10 +67,15 @@ export async function signUp({
 export async function signIn({
   username,
   password,
+  turnstileToken,
 }: {
   username: string;
   password: string;
+  turnstileToken: string;
 }) {
+  const isHuman = await verifyTurnstile(turnstileToken);
+  if (!isHuman) return { error: "Captcha verification failed." };
+
   try {
     const parsed = signInSchema.safeParse({
       username,

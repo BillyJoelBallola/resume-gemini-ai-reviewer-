@@ -14,10 +14,13 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import InputWithLabel from "@/components/InputWithLabel";
+import { Turnstile } from "@marsidev/react-turnstile";
 import { Loader } from "lucide-react";
 
 function SignInDialog() {
   const router = useRouter();
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({ username: "", password: "" });
 
@@ -27,7 +30,9 @@ function SignInDialog() {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const response = await signIn(formData);
+      if (!turnstileToken) return toast.error("Please complete the captcha.");
+
+      const response = await signIn({ ...formData, turnstileToken });
       if (response.error) return toast.error(response.error);
       if (response.success) router.push("/");
     } catch {
@@ -69,6 +74,14 @@ function SignInDialog() {
               setFormData((prev) => ({ ...prev, password: value as string }))
             }
           />
+
+          {/* Catcha */}
+          <Turnstile
+            siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+            onSuccess={(token) => setTurnstileToken(token)}
+            onExpire={() => setTurnstileToken(null)}
+          />
+
           <Button type="submit" disabled={isDisabled} className="w-full">
             {isLoading ? (
               <>
