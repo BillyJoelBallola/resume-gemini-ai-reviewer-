@@ -4,7 +4,7 @@ import { getJwtSecretKey, TOKEN_NAME } from "@/lib/auth";
 
 const protectedRoutes = ["/dashboard", "/resumes", "/settings"];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get(TOKEN_NAME)?.value;
 
