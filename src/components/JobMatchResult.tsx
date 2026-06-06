@@ -1,14 +1,7 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  CheckCircle2,
-  XCircle,
-  Lightbulb,
-  Tag,
-  TrendingUp,
-} from "lucide-react";
+import { CheckCircle2, Lightbulb } from "lucide-react";
 
 type JobMatch = {
   matchScore: number;
@@ -27,230 +20,196 @@ const verdictConfig = {
   STRONG_MATCH: {
     label: "Strong match",
     color: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
+    ring: "border-green-500",
+    score: "text-green-600",
+    bar: "bg-green-500",
   },
   GOOD_MATCH: {
     label: "Good match",
     color: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
+    ring: "border-blue-500",
+    score: "text-blue-600",
+    bar: "bg-blue-500",
   },
   PARTIAL_MATCH: {
     label: "Partial match",
     color:
       "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
+    ring: "border-yellow-500",
+    score: "text-yellow-600",
+    bar: "bg-yellow-500",
   },
   WEAK_MATCH: {
     label: "Weak match",
     color: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
+    ring: "border-red-500",
+    score: "text-red-600",
+    bar: "bg-red-500",
   },
 };
 
-const scoreColor = (score: number) => {
-  if (score >= 80) return "text-green-500";
-  if (score >= 60) return "text-yellow-500";
-  return "text-red-500";
-};
-
-const scoreBorder = (score: number) => {
-  if (score >= 80) return "border-green-500";
-  if (score >= 60) return "border-yellow-500";
-  return "border-red-500";
-};
+function ProgressBar({ value, color }: { value: number; color: string }) {
+  return (
+    <div className="w-full h-1.5 rounded-full bg-neutral-100 dark:bg-neutral-800">
+      <div
+        className={`h-1.5 rounded-full ${color}`}
+        style={{ width: `${Math.min(100, value)}%` }}
+      />
+    </div>
+  );
+}
 
 function JobMatchResult({ jobMatch }: { jobMatch: JobMatch }) {
-  const verdict =
-    verdictConfig[jobMatch.verdict] ?? verdictConfig.PARTIAL_MATCH;
+  const v = verdictConfig[jobMatch.verdict] ?? verdictConfig.PARTIAL_MATCH;
+
+  const keywordTotal =
+    jobMatch.matchedKeywords.length + jobMatch.missingKeywords.length;
+  const skillTotal =
+    jobMatch.matchedSkills.length + jobMatch.missingSkills.length;
+  const keywordPct =
+    keywordTotal > 0
+      ? (jobMatch.matchedKeywords.length / keywordTotal) * 100
+      : 0;
+  const skillPct =
+    skillTotal > 0 ? (jobMatch.matchedSkills.length / skillTotal) * 100 : 0;
+  const gapPct =
+    skillTotal > 0 ? (jobMatch.missingSkills.length / skillTotal) * 100 : 0;
 
   return (
     <div className="space-y-4">
       {/* Score + Summary */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className={`border-2 ${scoreBorder(jobMatch.matchScore)}`}>
-          <CardContent className="flex flex-col items-center justify-center py-8 gap-2">
-            <p className="text-sm text-muted-foreground">Match Score</p>
-            <p
-              className={`text-7xl font-bold font-mono ${scoreColor(jobMatch.matchScore)}`}
-            >
-              {jobMatch.matchScore}
-            </p>
-            <Badge className={verdict.color}>{verdict.label}</Badge>
-          </CardContent>
-        </Card>
+      <div className="flex items-center gap-5 p-5 rounded-xl border bg-card">
+        <div
+          className={`flex flex-col items-center justify-center w-20 h-20 rounded-full border-[3px] shrink-0 ${v.ring}`}
+        >
+          <span className={`text-3xl font-semibold leading-none ${v.score}`}>
+            {jobMatch.matchScore}
+          </span>
+          <span className="text-xs text-muted-foreground">/ 100</span>
+        </div>
+        <div className="space-y-2 flex-1">
+          <div className="flex items-center gap-2">
+            <span className="font-medium">{v.label}</span>
+            <Badge className={v.color}>
+              {jobMatch.verdict.replace("_", " ")}
+            </Badge>
+          </div>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            {jobMatch.summary}
+          </p>
+        </div>
+      </div>
 
-        <Card className="md:col-span-2">
-          <CardHeader>
-            <CardTitle className="text-sm text-muted-foreground uppercase">
-              Summary
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm leading-relaxed">{jobMatch.summary}</p>
-          </CardContent>
-        </Card>
+      {/* Metric bars */}
+      <div className="grid grid-cols-3 gap-3">
+        <div className="bg-neutral-50 dark:bg-neutral-900 rounded-lg p-3 space-y-2">
+          <p className="text-xs text-muted-foreground">Keyword match</p>
+          <p className="text-xl font-medium">
+            {jobMatch.matchedKeywords.length}{" "}
+            <span className="text-sm font-normal text-muted-foreground">
+              matched
+            </span>
+          </p>
+          <ProgressBar value={keywordPct} color="bg-green-500" />
+        </div>
+        <div className="bg-neutral-50 dark:bg-neutral-900 rounded-lg p-3 space-y-2">
+          <p className="text-xs text-muted-foreground">Skills match</p>
+          <p className="text-xl font-medium">
+            {jobMatch.matchedSkills.length}{" "}
+            <span className="text-sm font-normal text-muted-foreground">
+              matched
+            </span>
+          </p>
+          <ProgressBar value={skillPct} color="bg-green-500" />
+        </div>
+        <div className="bg-neutral-50 dark:bg-neutral-900 rounded-lg p-3 space-y-2">
+          <p className="text-xs text-muted-foreground">Missing skills</p>
+          <p className="text-xl font-medium">
+            {jobMatch.missingSkills.length}{" "}
+            <span className="text-sm font-normal text-muted-foreground">
+              gaps
+            </span>
+          </p>
+          <ProgressBar value={gapPct} color="bg-yellow-500" />
+        </div>
       </div>
 
       {/* Keywords */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-green-500 text-sm">
-              <Tag className="size-4" />
-              Matched Keywords
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="rounded-xl border p-4 space-y-3">
+          <p className="text-xs text-muted-foreground uppercase tracking-wide">
+            Matched keywords
+          </p>
+          <div className="flex flex-wrap gap-2">
             {jobMatch.matchedKeywords.length === 0 ? (
               <p className="text-sm text-muted-foreground">None found.</p>
             ) : (
-              <div className="flex flex-wrap gap-2">
-                {jobMatch.matchedKeywords.map((kw) => (
-                  <Badge
-                    key={kw}
-                    className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                  >
-                    {kw}
-                  </Badge>
-                ))}
-              </div>
+              jobMatch.matchedKeywords.map((kw) => (
+                <span
+                  key={kw}
+                  className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                >
+                  {kw}
+                </span>
+              ))
             )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-red-500 text-sm">
-              <Tag className="size-4" />
-              Missing Keywords
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+          </div>
+        </div>
+        <div className="rounded-xl border p-4 space-y-3">
+          <p className="text-xs text-muted-foreground uppercase tracking-wide">
+            Missing keywords
+          </p>
+          <div className="flex flex-wrap gap-2">
             {jobMatch.missingKeywords.length === 0 ? (
               <p className="text-sm text-muted-foreground">None missing!</p>
             ) : (
-              <div className="flex flex-wrap gap-2">
-                {jobMatch.missingKeywords.map((kw) => (
-                  <Badge
-                    key={kw}
-                    variant="outline"
-                    className="border-red-300 text-red-500"
-                  >
-                    {kw}
-                  </Badge>
-                ))}
-              </div>
+              jobMatch.missingKeywords.map((kw) => (
+                <span
+                  key={kw}
+                  className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                >
+                  {kw}
+                </span>
+              ))
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
 
-      {/* Skills */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-green-500 text-sm">
-              <CheckCircle2 className="size-4" />
-              Matched Skills
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {jobMatch.matchedSkills.length === 0 ? (
-              <p className="text-sm text-muted-foreground">None found.</p>
-            ) : (
-              <ul className="space-y-1">
-                {jobMatch.matchedSkills.map((skill, i) => (
-                  <li key={i} className="flex items-center gap-2 text-sm">
-                    <CheckCircle2 className="size-4 text-green-500 shrink-0" />
-                    {skill}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </CardContent>
-        </Card>
+      {/* Strengths */}
+      {jobMatch.strengths.length > 0 && (
+        <div className="rounded-xl border p-4 space-y-1">
+          <p className="text-xs text-muted-foreground uppercase tracking-wide mb-3">
+            Strengths for this role
+          </p>
+          {jobMatch.strengths.map((item, i) => (
+            <div
+              key={i}
+              className="flex items-start gap-2 py-2 border-b last:border-0 border-dashed text-sm"
+            >
+              <CheckCircle2 className="size-4 text-green-500 shrink-0 mt-0.5" />
+              {item}
+            </div>
+          ))}
+        </div>
+      )}
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-red-500 text-sm">
-              <XCircle className="size-4" />
-              Missing Skills
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {jobMatch.missingSkills.length === 0 ? (
-              <p className="text-sm text-muted-foreground">None missing!</p>
-            ) : (
-              <ul className="space-y-1">
-                {jobMatch.missingSkills.map((skill, i) => (
-                  <li key={i} className="flex items-center gap-2 text-sm">
-                    <XCircle className="size-4 text-red-500 shrink-0" />
-                    {skill}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Strengths & Gaps */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-green-500 text-sm">
-              <TrendingUp className="size-4" />
-              Strengths for this role
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="space-y-2">
-              {jobMatch.strengths.map((item, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm">
-                  <CheckCircle2 className="size-4 text-green-500 shrink-0 mt-0.5" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-red-500 text-sm">
-              <XCircle className="size-4" />
-              Gaps for this role
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="space-y-2">
-              {jobMatch.gaps.map((item, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm">
-                  <XCircle className="size-4 text-red-500 shrink-0 mt-0.5" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Suggestions */}
-      {jobMatch.suggestions.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-sm">
-              <Lightbulb className="size-4 text-yellow-500" />
-              Suggestions to improve your match
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="space-y-2">
-              {jobMatch.suggestions.map((item, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm">
-                  <Lightbulb className="size-4 text-yellow-500 shrink-0 mt-0.5" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
+      {/* Gaps + Suggestions combined */}
+      {(jobMatch.gaps.length > 0 || jobMatch.suggestions.length > 0) && (
+        <div className="rounded-xl border p-4 space-y-1">
+          <p className="text-xs text-muted-foreground uppercase tracking-wide mb-3">
+            Gaps &amp; suggestions
+          </p>
+          {[...jobMatch.gaps, ...jobMatch.suggestions].map((item, i) => (
+            <div
+              key={i}
+              className="flex items-start gap-2 py-2 border-b last:border-0 border-dashed text-sm"
+            >
+              <Lightbulb className="size-4 text-yellow-500 shrink-0 mt-0.5" />
+              {item}
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );
